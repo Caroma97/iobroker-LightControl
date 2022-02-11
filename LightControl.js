@@ -3,11 +3,11 @@ const Version = "2.0.19" //vom 6.1.2022 - Skript um Lichter in Helligkeit, Farbe
 log("starting LightControl V." + Version);
 
 const praefix = "javascript.0.LightControl2" // Skriptordner
-const LuxSensor = 'linkeddevices.0.Klima.Draussen.brightness'; // Datenpunkt des globalen Luxsensors, wird verwendet wenn in der Gruppe kein gesonderter definiert wird
-const IsPresenceDp = ""; // Datenpunkt für Anwesenheit (true/false)
+const LuxSensor = ''; // Datenpunkt des globalen Luxsensors, wird verwendet wenn in der Gruppe kein gesonderter definiert wird
+const IsPresenceDp = ""//"radar2.0.Mario._here"; // Datenpunkt für Anwesenheit (true/false)
 const PresenceCountDp = "radar2.0._nHere"; // Datenpunkt für Anwesenheitszähler
-const logging = false; // Logging an/aus
-const RampSteps = 10; //Wieviele Schritte zum dimmen? Bitte nicht zu hoch setzen, wird zwar smoother, kann aber zu timing Problemen führen wenn gleichzeitig eine kurze Zeit in den Objekten gewählt.
+const logging = true; // Logging an/aus
+const RampSteps = 20; //Wieviele Schritte zum dimmen? Bitte nicht zu hoch setzen, wird zwar smoother, kann aber zu timing Problemen führen wenn gleichzeitig eine kurze Zeit in den Objekten gewählt.
 
 const minCt = 2700; //Regelbereich für Farbtemperatur in Kelvin für Adaptive Ct
 const maxCt = 6500;//Regelbereich für Farbtemperatur in Kelvin für Adaptive Ct
@@ -15,143 +15,42 @@ const minBri = 10; //Mindesthelligkeit für AdaptiveBri
 
 const LightGroups = {
     0: {
-        description: "Flur Eg.",
+        description: "Badezimmer",
         lights: {
             0: {
-                description: "Strahler1",
-                power: { oid: "zigbee.0.ec1bbdfffe32de48.state", onVal: true, offVal: false },
-                bri: { oid: "zigbee.0.ec1bbdfffe32de48.brightness", minVal: 0, maxVal: 100, defaultVal: 100 },
-                ct: { oid: "zigbee.0.ec1bbdfffe32de48.colortemp", minVal: 454, maxVal: 250 },
-                sat: { oid: "", minVal: null, maxVal: null },
-                modeswitch: { oid: "", whiteModeVal: false, colorModeVal: true },
-                color: { oid: "", type: "", default: "" }
-            },
-            1: {
-                description: "Strahler2",
-                power: { oid: "zigbee.0.680ae2fffe0ca671.state", onVal: true, offVal: false },
-                bri: { oid: "zigbee.0.680ae2fffe0ca671.brightness", minVal: 0, maxVal: 100, defaultVal: 100 },
-                ct: { oid: "zigbee.0.680ae2fffe0ca671.colortemp", minVal: 454, maxVal: 250 },
-                sat: { oid: "", minVal: null, maxVal: null },
-                modeswitch: { oid: "", whiteModeVal: false, colorModeVal: true },
-                color: { oid: "", type: "", default: "" }
-            },
-            2: {
-                description: "Deckenlicht bei Küche/Heizung",
-                power: { oid: "yeelight-2.0.color-0x0000000007e3cadb.control.power", onVal: true, offVal: false },
-                bri: { oid: "yeelight-2.0.color-0x0000000007e3cadb.control.active_bright", minVal: 0, maxVal: 100, defaultVal: 100 },
-                ct: { oid: "yeelight-2.0.color-0x0000000007e3cadb.control.ct", minVal: 6500, maxVal: 2700 },
-                sat: { oid: "yeelight-2.0.color-0x0000000007e3cadb.control.sat", minVal: 0, maxVal: 100 },
-                modeswitch: { oid: "yeelight-2.0.color-0x0000000007e3cadb.control.color_mode", whiteModeVal: false, colorModeVal: true },
-                color: { oid: "yeelight-2.0.color-0x0000000007e3cadb.control.rgb", type: "hex", default: "#FFFFFF" }
-            },
-            3: {
-                description: "Strahler Toillettenvorraum",
-                power: { oid: "yeelight-2.0.White1.control.power", onVal: true, offVal: false },
-                bri: { oid: "yeelight-2.0.White1.control.active_bright", minVal: 0, maxVal: 100, defaultVal: 100 },
-                ct: { oid: "yeelight-2.0.White1.control.ct", minVal: 6500, maxVal: 2700 },
+                description: "Deckenlampen",
+                power: { oid: "hue.0.Bad.allOn", onVal: true, offVal: false },
+                bri: { oid: "hue.0.Bad.bri", minVal: 0, maxVal: 254, defaultVal: 123 },
+                ct: { oid: "hue.0.Bad.ct", minVal: 0, maxVal: 254 },
                 sat: { oid: "", minVal: null, maxVal: null },
                 modeswitch: { oid: "", whiteModeVal: false, colorModeVal: true },
                 color: { oid: "", type: "", default: "" }
             }
         },
         sensors: {
-            0: { id: 'linkeddevices.0.Bewegungsmelder.Flur_EG.0.IsMotion', motionVal: true, noMotionVal: false },
-            1: { id: 'linkeddevices.0.Bewegungsmelder.Flur_EG.1.IsMotion', motionVal: true, noMotionVal: false },
-            2: { id: 'linkeddevices.0.Bewegungsmelder.Flur_EG.2.IsMotion', motionVal: true, noMotionVal: false }
+            0: { id: 'hue.0.Bad_Bewegungsmelder.presence', motionVal: true, noMotionVal: false }
         }
     },
     1: {
         description: "Wohnzimmer",
         lights: {
             0: {
-                description: "Lampe Pc",
-                power: { oid: "sonoff.0.Sonoff18.POWER", onVal: true, offVal: false },
-                bri: { oid: "", minVal: null, maxVal: null, defaultVal: null },
-                ct: { oid: "", minVal: null, maxVal: null },
-                sat: { oid: "", minVal: null, maxVal: null },
+                description: "Deckenlampen",
+                power: { oid: "hue.0.Wohnzimmer.allOn", onVal: true, offVal: false },
+                bri: { oid: "hue.0.Wohnzimmer.level", minVal: 0, maxVal: 100, defaultVal: 80 },
+                ct: { oid: "hue.0.Wohnzimmer.ct", minVal: 0, maxVal: 254 },
+                sat: { oid: "hue.0.Wohnzimmer.sat", minVal: 0, maxVal: 254 },
                 modeswitch: { oid: "", whiteModeVal: false, colorModeVal: true },
-                color: { oid: "", type: "", default: "" }
+                color: { oid: "hue.0.Wohnzimmer.xy", type: "xy", default: "" }
             },
             1: {
-                description: "Drachenlampe",
-                power: { oid: "sonoff.0.Sonoff19.POWER", onVal: true, offVal: false },
-                bri: { oid: "", minVal: null, maxVal: null, defaultVal: null },
+                description: "DeskLamp",
+                power: { oid: "wled.0.50029168eeac.on", onVal: true, offVal: false },
+                bri: { oid: "wled.0.50029168eeac.bri", minVal: 0, maxVal: 254, defaultVal: 180 },
                 ct: { oid: "", minVal: null, maxVal: null },
                 sat: { oid: "", minVal: null, maxVal: null },
                 modeswitch: { oid: "", whiteModeVal: false, colorModeVal: true },
-                color: { oid: "", type: "", default: "" }
-            },
-            2: {
-                description: "Stehlampe Couch",
-                power: { oid: "sonoff.0.Sonoff20.POWER", onVal: true, offVal: false },
-                bri: { oid: "", minVal: null, maxVal: null, defaultVal: null },
-                ct: { oid: "", minVal: null, maxVal: null },
-                sat: { oid: "", minVal: null, maxVal: null },
-                modeswitch: { oid: "", whiteModeVal: false, colorModeVal: true },
-                color: { oid: "", type: "", default: "" }
-            },
-            3: {
-                description: "Led Strip am TV",
-                power: { oid: "yeelight-2.0.Strip1.control.power", onVal: true, offVal: false },
-                bri: { oid: "yeelight-2.0.Strip1.control.active_bright", minVal: 0, maxVal: 100, defaultVal: 100 },
-                ct: { oid: "yeelight-2.0.Strip1.control.ct", minVal: 6500, maxVal: 2700 },
-                sat: { oid: "yeelight-2.0.Strip1.control.sat", minVal: 0, maxVal: 100 },
-                modeswitch: { oid: "yeelight-2.0.Strip1.control.color_mode", whiteModeVal: false, colorModeVal: true },
-                color: { oid: "yeelight-2.0.Strip1.control.rgb", type: "hex", default: "#FFFFFF" }
-            },
-            4: {
-                description: "Kugellampe",
-                power: { oid: "zigbee.0.ccccccfffed68f5d.state", onVal: true, offVal: false },
-                bri: { oid: "zigbee.0.ccccccfffed68f5d.brightness", minVal: 0, maxVal: 100, defaultVal: 60 },
-                ct: { oid: "", minVal: 6500, maxVal: 2700 },
-                sat: { oid: "", minVal: 0, maxVal: 100 },
-                modeswitch: { oid: "", whiteModeVal: false, colorModeVal: true },
-                color: { oid: "zigbee.0.ccccccfffed68f5d.color", type: "hex", default: "#FFFFFF", warmWhiteColor: "#FFA500", dayLightColor: "#FFE4B5" }
-            },
-            5: {
-                description: "Strahler",
-                power: { oid: "zigbee.0.680ae2fffeae5254.state", onVal: true, offVal: false },
-                bri: { oid: "zigbee.0.680ae2fffeae5254.brightness", minVal: 0, maxVal: 100, defaultVal: 100 },
-                ct: { oid: "", minVal: 6500, maxVal: 2700 },
-                sat: { oid: "", minVal: 0, maxVal: 100 },
-                modeswitch: { oid: "", whiteModeVal: false, colorModeVal: true },
-                color: { oid: "zigbee.0.680ae2fffeae5254.color", type: "hex", default: "#FFFFFF", warmWhiteColor: "#FFA500", dayLightColor: "#FFE4B5" }
-            },
-            6: {
-                description: "Wooden Bar",
-                power: { oid: "wled.0.3c6105d15496.on", onVal: true, offVal: false },
-                bri: { oid: "wled.0.3c6105d15496.bri", minVal: 0, maxVal: 255, defaultVal: 200 },
-                ct: { oid: "", minVal: 6500, maxVal: 2700 },
-                sat: { oid: "", minVal: 0, maxVal: 100 },
-                modeswitch: { oid: "", whiteModeVal: false, colorModeVal: true },
-                color: { oid: "wled.0.3c6105d15496.seg.0.col.0_HEX", type: "hex", default: "#FFFFFF", warmWhiteColor: "#FFA500", dayLightColor: "#FFE4B5" }
-            },
-            7: {
-                description: "144er Left Bar",
-                power: { oid: "wled.0.3c6105d0a203.on", onVal: true, offVal: false },
-                bri: { oid: "wled.0.3c6105d0a203.bri", minVal: 0, maxVal: 255, defaultVal: 200 },
-                ct: { oid: "", minVal: 6500, maxVal: 2700 },
-                sat: { oid: "", minVal: 0, maxVal: 100 },
-                modeswitch: { oid: "", whiteModeVal: false, colorModeVal: true },
-                color: { oid: "wled.0.3c6105d0a203.seg.0.col.0_HEX", type: "hex", default: "#FFFFFF", warmWhiteColor: "#FFA500", dayLightColor: "#FFE4B5" }
-            },
-            8: {
-                description: "144er Right Bar",
-                power: { oid: "wled.0.3c6105d1554b.on", onVal: true, offVal: false },
-                bri: { oid: "wled.0.3c6105d1554b.bri", minVal: 0, maxVal: 255, defaultVal: 200 },
-                ct: { oid: "", minVal: 6500, maxVal: 2700 },
-                sat: { oid: "", minVal: 0, maxVal: 100 },
-                modeswitch: { oid: "", whiteModeVal: false, colorModeVal: true },
-                color: { oid: "wled.0.3c6105d1554b.seg.0.col.0_HEX", type: "hex", default: "#FFFFFF", warmWhiteColor: "#FFA500", dayLightColor: "#FFE4B5" }
-            },
-            9: {
-                description: "384er Rondell",
-                power: { oid: "wled.0.ec94cb648b40.on", onVal: true, offVal: false },
-                bri: { oid: "wled.0.ec94cb648b40.bri", minVal: 0, maxVal: 255, defaultVal: 15 },
-                ct: { oid: "", minVal: 6500, maxVal: 2700 },
-                sat: { oid: "", minVal: 0, maxVal: 100 },
-                modeswitch: { oid: "", whiteModeVal: false, colorModeVal: true },
-                color: { oid: "wled.0.ec94cb648b40.seg.0.col.0_HEX", type: "hex", default: "#FF0000", warmWhiteColor: "#FFA500", dayLightColor: "#FFE4B5" }
+                color: { oid: "wled.0.50029168eeac", type: "wled", default: "" }
             }
         },
         sensors: {
@@ -159,197 +58,32 @@ const LightGroups = {
         }
     },
     2: {
-        description: "Klo",
+        description: "Schlafzimmer",
         lights: {
             0: {
-                description: "Deckenlampe",
-                power: { oid: "zigbee.0.680ae2fffef92c4e.state", onVal: true, offVal: false },
-                bri: { oid: "zigbee.0.680ae2fffef92c4e.brightness", minVal: 0, maxVal: 100, defaultVal: 100 },
-                ct: { oid: "zigbee.0.680ae2fffef92c4e.colortemp", minVal: 454, maxVal: 250 },
+                description: "Deckenlampen",
+                power: { oid: "hue.0.Wohnzimmer_Ambiance.allOn", onVal: true, offVal: false },
+                bri: { oid: "hue.0.Wohnzimmer_Ambiance.bri", minVal: 0, maxVal: 254, defaultVal: 123 },
+                ct: { oid: "hue.0.Wohnzimmer_Ambiance.ct", minVal: 0, maxVal: 254 },
+                sat: { oid: "hue.0.Wohnzimmer_Ambiance.sat", minVal: 0, maxVal: 254 },
+                modeswitch: { oid: "", whiteModeVal: false, colorModeVal: true },
+                color: { oid: "hue.0.Wohnzimmer_Ambiance.xy", type: "xy", default: "" }
+            },
+            1: {
+                description: "360-BottleLamp",
+                power: { oid: "wled.0.40f520259aa0.on", onVal: true, offVal: false },
+                bri: { oid: "wled.0.40f520259aa0.bri", minVal: 0, maxVal: 254, defaultVal: 180 },
+                ct: { oid: "", minVal: null, maxVal: null },
                 sat: { oid: "", minVal: null, maxVal: null },
                 modeswitch: { oid: "", whiteModeVal: false, colorModeVal: true },
-                color: { oid: "", type: "", default: "" }
+                color: { oid: "wled.0.40f520259aa0", type: "wled", default: "" }
             }
         },
         sensors: {
-            0: { id: 'linkeddevices.0.Bewegungsmelder.Toilette.IsMotion', motionVal: true, noMotionVal: false }
+
         }
-    },
+    }/*,
     3: {
-        description: "Flur Og.",
-        lights: {
-            0: {
-                description: "Strahlergruppe Colorteil",
-                power: { oid: "zigbee.0.ccccccfffed4ee4c.state", onVal: true, offVal: false },
-                bri: { oid: "zigbee.0.ccccccfffed4ee4c.brightness", minVal: 0, maxVal: 100, defaultVal: 100 },
-                ct: { oid: "", minVal: null, maxVal: null },
-                sat: { oid: "", minVal: null, maxVal: null },
-                modeswitch: { oid: "", whiteModeVal: false, colorModeVal: true },
-                color: { oid: "zigbee.0.ccccccfffed4ee4c.color", type: "hex", default: "#FFFFFF", warmWhiteColor: "#FFA500", dayLightColor: "#FFE4B5" }
-            },
-            1: {
-                description: "Strahlergruppe Teil2",
-                power: { oid: "zigbee.0.588e81fffe0ffd7a.state", onVal: true, offVal: false },
-                bri: { oid: "zigbee.0.588e81fffe0ffd7a.brightness", minVal: 0, maxVal: 100, defaultVal: 100 },
-                ct: { oid: "zigbee.0.588e81fffe0ffd7a.colortemp", minVal: 454, maxVal: 250 },
-                sat: { oid: "", minVal: null, maxVal: null },
-                modeswitch: { oid: "", whiteModeVal: false, colorModeVal: true },
-                color: { oid: "", type: "hex", default: "", warmWhiteColor: "", dayLightColor: "" }
-            },
-            2: {
-                description: "Strahlergruppe Teil3",
-                power: { oid: "zigbee.0.ec1bbdfffe6fc795.state", onVal: true, offVal: false },
-                bri: { oid: "zigbee.0.ec1bbdfffe6fc795.brightness", minVal: 0, maxVal: 100, defaultVal: 100 },
-                ct: { oid: "zigbee.0.ec1bbdfffe6fc795.colortemp", minVal: 454, maxVal: 250 },
-                sat: { oid: "", minVal: null, maxVal: null },
-                modeswitch: { oid: "", whiteModeVal: false, colorModeVal: true },
-                color: { oid: "", type: "hex", default: "", warmWhiteColor: "", dayLightColor: "" }
-            }
-
-        },
-        sensors: {
-            0: { id: 'linkeddevices.0.Bewegungsmelder.Flur_Og1.0.IsMotion', motionVal: true, noMotionVal: false },
-            1: { id: 'linkeddevices.0.Bewegungsmelder.Flur_Og1.1.IsMotion', motionVal: true, noMotionVal: false }
-        }
-    },
-    4: {
-        description: "Bad",
-        lights: {
-            0: {
-                description: "Deckenlampe",
-                power: { oid: "zigbee.0.588e81fffeae2ae0.state", onVal: true, offVal: false },
-                bri: { oid: "zigbee.0.588e81fffeae2ae0.brightness", minVal: 0, maxVal: 100, defaultVal: 100 },
-                ct: { oid: "zigbee.0.588e81fffeae2ae0.colortemp", minVal: 454, maxVal: 250 },
-                sat: { oid: "", minVal: null, maxVal: null },
-                modeswitch: { oid: "", whiteModeVal: false, colorModeVal: true },
-                color: { oid: "", type: "", default: "" }
-            }
-        },
-        sensors: {
-            0: { id: 'linkeddevices.0.Bewegungsmelder.Bad.0.IsMotion', motionVal: true, noMotionVal: false }
-        }
-    },
-    5: {
-        description: "Dach",
-        lights: {
-            0: {
-                description: "Klemmstrahler Dachflur",
-                power: { oid: "zigbee.0.680ae2fffeaddb07.state", onVal: true, offVal: false },
-                bri: { oid: "zigbee.0.680ae2fffeaddb07.brightness", minVal: 0, maxVal: 100, defaultVal: 100 },
-                ct: { oid: "zigbee.0.680ae2fffeaddb07.colortemp", minVal: 454, maxVal: 250 },
-                sat: { oid: "", minVal: null, maxVal: null },
-                modeswitch: { oid: "", whiteModeVal: false, colorModeVal: true },
-                color: { oid: "", type: "", default: "" }
-            },
-            1: {
-                description: "Klemmstrahler Dachtreppe",
-                power: { oid: "zigbee.0.588e81fffe409146.state", onVal: true, offVal: false },
-                bri: { oid: "zigbee.0.588e81fffe409146.brightness", minVal: 0, maxVal: 100, defaultVal: 100 },
-                ct: { oid: "zigbee.0.588e81fffe409146.colortemp", minVal: 454, maxVal: 250 },
-                sat: { oid: "", minVal: null, maxVal: null },
-                modeswitch: { oid: "", whiteModeVal: false, colorModeVal: true },
-                color: { oid: "", type: "", default: "" }
-            }
-        },
-        sensors: {
-
-        }
-    },
-    6: {
-        description: "Schlafzimmer C.",
-        lights: {
-            0: {
-                description: "Nachttischlampe Carlo",
-                power: { oid: "zigbee.0.680ae2fffec81608.state", onVal: true, offVal: false },
-                bri: { oid: "zigbee.0.680ae2fffec81608.brightness", minVal: 0, maxVal: 100, defaultVal: 100 },
-                ct: { oid: "zigbee.0.680ae2fffec81608.colortemp", minVal: 454, maxVal: 250 },
-                sat: { oid: "", minVal: null, maxVal: null },
-                modeswitch: { oid: "", whiteModeVal: false, colorModeVal: true },
-                color: { oid: "", type: "", default: "" }
-            },
-            1: {
-                description: "Nachttischlampe Gold",
-                power: { oid: "zigbee.0.ccccccfffea91336.state", onVal: true, offVal: false },
-                bri: { oid: "zigbee.0.ccccccfffea91336.brightness", minVal: 0, maxVal: 100, defaultVal: 100 },
-                ct: { oid: "", minVal: null, maxVal: null },
-                sat: { oid: "", minVal: null, maxVal: null },
-                modeswitch: { oid: "", whiteModeVal: false, colorModeVal: true },
-                color: { oid: "", type: "", default: "" }
-            }
-        },
-        sensors: {
-
-        }
-    },
-    7: {
-        description: "Küche",
-        lights: {
-            0: {
-                description: "Unterbau Leds",
-                power: { oid: "zigbee.0.d0cf5efffebe553c.state", onVal: true, offVal: false },
-                bri: { oid: "zigbee.0.d0cf5efffebe553c.brightness", minVal: 0, maxVal: 100, defaultVal: 100 },
-                ct: { oid: "", minVal: null, maxVal: null },
-                sat: { oid: "", minVal: null, maxVal: null },
-                modeswitch: { oid: "", whiteModeVal: false, colorModeVal: true },
-                color: { oid: "", type: "", default: "" }
-            }
-        },
-        sensors: {
-            0: { id: 'linkeddevices.0.Bewegungsmelder.Kueche.0.IsMotion', motionVal: true, noMotionVal: false }
-        }
-    },
-    8: {
-        description: "Vitrine",
-        lights: {
-            0: {
-                description: "Unterbau Leds",
-                power: { oid: "zigbee.0.680ae2fffeaded15.state", onVal: true, offVal: false },
-                bri: { oid: "zigbee.0.680ae2fffeaded15.brightness", minVal: 0, maxVal: 100, defaultVal: 100 },
-                ct: { oid: "zigbee.0.680ae2fffeaded15.colortemp", minVal: 454, maxVal: 250 },
-                sat: { oid: "", minVal: null, maxVal: null },
-                modeswitch: { oid: "", whiteModeVal: false, colorModeVal: true },
-                color: { oid: "", type: "", default: "" }
-            }
-        },
-        sensors: {
-            0: { id: 'zigbee.0.00158d00042ae926.opened', motionVal: true, noMotionVal: false }
-        }
-    },
-    9: {
-        description: "Haustür Aussenbeleuchtung",
-        lights: {
-            0: {
-                description: "Lampe Haustür",
-                power: { oid: "yeelight-2.0.White2.control.power", onVal: true, offVal: false },
-                bri: { oid: "yeelight-2.0.White2.control.active_bright", minVal: 0, maxVal: 100, defaultVal: 100 },
-                ct: { oid: "yeelight-2.0.White2.control.ct", minVal: 6500, maxVal: 2700 },
-                sat: { oid: "", minVal: null, maxVal: null },
-                modeswitch: { oid: "", whiteModeVal: false, colorModeVal: true },
-                color: { oid: "", type: "", default: "" }
-            }
-        },
-        sensors: {
-            0: { id: 'linkeddevices.0.Magnetkontakt.Flur_Eg.Haustuer.opened', motionVal: true, noMotionVal: false }
-        }
-    },
-    10: {
-        description: "Klamotten_C",
-        lights: {
-            0: {
-                description: "12V Strahlergruppe",
-                power: { oid: "zigbee.0.842e14fffe186b9d.state", onVal: true, offVal: false },
-                bri: { oid: "", minVal: 0, maxVal: 100, defaultVal: 100 },
-                ct: { oid: "", minVal: null, maxVal: null },
-                sat: { oid: "", minVal: null, maxVal: null },
-                modeswitch: { oid: "", whiteModeVal: false, colorModeVal: true },
-                color: { oid: "", type: "", default: "" }
-            }
-        },
-        sensors: {
-            0: { id: 'linkeddevices.0.Bewegungsmelder.Schlafzimmer_C.0.IsMotion', motionVal: true, noMotionVal: false }
-        }
-    },
-    11: {
         description: "Test",
         lights: {
             0: {
@@ -366,7 +100,7 @@ const LightGroups = {
 
         }
     }
-
+*/
 };
 
 // ------------------ AB HIER NIX MEHR ÄNDERN --------------------------
@@ -477,10 +211,16 @@ async function GlobalLuxHandling() {
 async function GlobalPresenceHandling() {
     if (PresenceCountDp != "") {
         ActualPresenceCount = (await getStateAsync(PresenceCountDp)).val;
-        on({ id: PresenceCountDp, change: "gt", ack: true }, function (dp) { //Trigger erstellen, außer Dp ist readonly
-            if (logging) log("Triggered PresenceCountDp " + PresenceCountDp + " new value is " + dp.state.val);
-            ActualPresenceCount = dp.state.val;
-            AutoOnPresenceIncrease();
+        on({ id: PresenceCountDp, change: "any", ack: true }, function (dp) { //Trigger erstellen, außer Dp ist readonly
+            if (dp.state.val > dp.state.val) {
+                if (logging) log("Triggered PresenceCountDp " + PresenceCountDp + " new value is " + dp.state.val);
+                ActualPresenceCount = dp.state.val;
+                AutoOnPresenceIncrease();
+            }
+            else if (dp.state.val == 0) {
+                if (logging) log("Alle sind aus dem Haus, Lichter werden aus geschaltet!");
+                setState("javascript.0.LightControl2.all.power", false);
+            }
         });
     };
 
@@ -495,6 +235,7 @@ async function GlobalPresenceHandling() {
 
     if (ActualPresenceCount == 0) {
         ActualPresence = false;
+
     } else {
         ActualPresence = true;
     };
@@ -1009,6 +750,9 @@ async function SetColor(Group, Color) {
                     case "xy":
                         await setStateAsync(LightGroups[Group].lights[Light].color.oid, ConvertRgbToXy(rgbTemp), false);
                         break;
+                    case "wled":
+                        await SetWLED(LightGroups[Group].lights[Light].color.oid, Color);
+                        break;
                     default:
                         log("SetColor: Unknown colortype, please specify", "warn");
                 };
@@ -1020,6 +764,27 @@ async function SetColor(Group, Color) {
     } else {
         return false;
     };
+}
+
+async function SetWLED(id, Color) {
+
+    let cacheSelectorWledPS = $("channel[state.id=" + id + "*.ps]");
+    let cacheSelectorWledFX = $("channel[state.id=" + id + ".*.0.fx]");
+    let cacheSelectorWledRGB = $("channel[state.id=" + id + ".*.0.col.0_HEX]");
+    if (logging) log(cacheSelectorWledRGB.length + " Segmente gefunden");
+    cacheSelectorWledPS.each(async function (id, i) {
+        await setStateAsync(id, 99, false);
+        if (logging) log("Preset: Setze " + id + " auf 99");
+    });
+    cacheSelectorWledFX.each(async function (id, i) {
+        await setStateAsync(id, 0, false);
+        if (logging) log("Effect: Setze " + id + " auf 0");
+    });
+    cacheSelectorWledRGB.each(async function (id, i) {
+        await setStateAsync(id, Color, false);
+        if (logging) log("Color: Setze " + id + " auf " + Color);
+    });
+    
 }
 
 
@@ -1309,7 +1074,6 @@ async function AutoOnPresenceIncrease() {
     if (logging) log("Reaching AutoOnPresenceIncrease");
     let tempBri = 0;
     let tempColor = "";
-
 
     for (let Group in LightGroups) {
         if (LightGroups[Group].autoOnPresenceIncrease.enabled && LightGroups[Group].actualLux < LightGroups[Group].autoOnPresenceIncrease.minLux && !LightGroups[Group].power) {
@@ -1801,8 +1565,8 @@ function ConvertRgbToXy(rgb) {
 
     let X = x / (x + y + z);
     let Y = y / (x + y + z);
-    return [X, Y];
-    //return X + "," + Y;
+    //return [X, Y];
+    return X + "," + Y;
 
 }
 
