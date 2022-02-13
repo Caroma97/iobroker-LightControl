@@ -1,8 +1,8 @@
-const Version = "2.0.19" //vom 6.1.2022 - Skript um Lichter in Helligkeit, Farbe und Farbtemp global zu steuern - Git: https://github.com/Pittini/iobroker-LightControl - Forum: https://forum.iobroker.net/topic/36578/vorlage-lightcontrol
+const Version = "2.0.19_01" //vom 6.1.2022 - Skript um Lichter in Helligkeit, Farbe und Farbtemp global zu steuern - Git: https://github.com/Pittini/iobroker-LightControl - Forum: https://forum.iobroker.net/topic/36578/vorlage-lightcontrol
 
 log("starting LightControl V." + Version);
 
-const praefix = "javascript.0.LightControl2" // Skriptordner
+const praefix = "javascript.0.inUse.LightControl2" // Skriptordner
 const LuxSensor = ''; // Datenpunkt des globalen Luxsensors, wird verwendet wenn in der Gruppe kein gesonderter definiert wird
 const IsPresenceDp = ""//"radar2.0.Mario._here"; // Datenpunkt für Anwesenheit (true/false)
 const PresenceCountDp = "radar2.0._nHere"; // Datenpunkt für Anwesenheitszähler
@@ -42,15 +42,6 @@ const LightGroups = {
                 sat: { oid: "hue.0.Wohnzimmer.sat", minVal: 0, maxVal: 254 },
                 modeswitch: { oid: "", whiteModeVal: false, colorModeVal: true },
                 color: { oid: "hue.0.Wohnzimmer.xy", type: "xy", default: "" }
-            },
-            1: {
-                description: "DeskLamp",
-                power: { oid: "wled.0.50029168eeac.on", onVal: true, offVal: false },
-                bri: { oid: "wled.0.50029168eeac.bri", minVal: 0, maxVal: 254, defaultVal: 180 },
-                ct: { oid: "", minVal: null, maxVal: null },
-                sat: { oid: "", minVal: null, maxVal: null },
-                modeswitch: { oid: "", whiteModeVal: false, colorModeVal: true },
-                color: { oid: "wled.0.50029168eeac", type: "wled", default: "" }
             }
         },
         sensors: {
@@ -63,7 +54,7 @@ const LightGroups = {
             0: {
                 description: "Deckenlampen",
                 power: { oid: "hue.0.Wohnzimmer_Ambiance.allOn", onVal: true, offVal: false },
-                bri: { oid: "hue.0.Wohnzimmer_Ambiance.bri", minVal: 0, maxVal: 254, defaultVal: 123 },
+                bri: { oid: "hue.0.Wohnzimmer_Ambiance.bri", minVal: 0, maxVal: 254, defaultVal: 230 },
                 ct: { oid: "hue.0.Wohnzimmer_Ambiance.ct", minVal: 0, maxVal: 254 },
                 sat: { oid: "hue.0.Wohnzimmer_Ambiance.sat", minVal: 0, maxVal: 254 },
                 modeswitch: { oid: "", whiteModeVal: false, colorModeVal: true },
@@ -72,18 +63,62 @@ const LightGroups = {
             1: {
                 description: "360-BottleLamp",
                 power: { oid: "wled.0.40f520259aa0.on", onVal: true, offVal: false },
-                bri: { oid: "wled.0.40f520259aa0.bri", minVal: 0, maxVal: 254, defaultVal: 180 },
+                bri: { oid: "wled.0.40f520259aa0.bri", minVal: 0, maxVal: 254, defaultVal: 200 },
                 ct: { oid: "", minVal: null, maxVal: null },
                 sat: { oid: "", minVal: null, maxVal: null },
                 modeswitch: { oid: "", whiteModeVal: false, colorModeVal: true },
                 color: { oid: "wled.0.40f520259aa0", type: "wled", default: "" }
+            },
+            2: {
+                description: "DeskLamp",
+                power: { oid: "wled.0.50029168eeac.on", onVal: true, offVal: false },
+                bri: { oid: "wled.0.50029168eeac.bri", minVal: 0, maxVal: 254, defaultVal: 200 },
+                ct: { oid: "", minVal: null, maxVal: null },
+                sat: { oid: "", minVal: null, maxVal: null },
+                modeswitch: { oid: "", whiteModeVal: false, colorModeVal: true },
+                color: { oid: "wled.0.50029168eeac", type: "wled", default: "" }
             }
         },
         sensors: {
 
         }
-    }/*,
+    },
     3: {
+        description: "Ambiente EG",
+        lights: {
+            0: {
+                description: "Hue Go 1",
+                power: { oid: "hue.1.Hue_go_1.on", onVal: true, offVal: false },
+                bri: { oid: "hue.1.hue.1.Hue_go_1.bri", minVal: 0, maxVal: 254, defaultVal: 230 },
+                ct: { oid: "hue.1.Hue_go_1.ct", minVal: 0, maxVal: 254 },
+                sat: { oid: "hue.1.Hue_go_1.sat", minVal: 0, maxVal: 254 },
+                modeswitch: { oid: "", whiteModeVal: false, colorModeVal: true },
+                color: { oid: "hue.1.Hue_go_1.xy", type: "xy", default: "0.5812,0.3911" }
+            },
+            1: {
+                description: "Lightstrip Couch",
+                power: { oid: "hue.1.Wohnzimmer_Lightstrip_Couch.on", onVal: true, offVal: false },
+                bri: { oid: "hue.1.hue.1.Wohnzimmer_Lightstrip_Couch.bri", minVal: 0, maxVal: 254, defaultVal: 230 },
+                ct: { oid: "hue.1.Wohnzimmer_Lightstrip_Couch.ct", minVal: 0, maxVal: 254 },
+                sat: { oid: "hue.1.Wohnzimmer_Lightstrip_Couch.sat", minVal: 0, maxVal: 254 },
+                modeswitch: { oid: "", whiteModeVal: false, colorModeVal: true },
+                color: { oid: "hue.1.Wohnzimmer_Lightstrip_Couch.xy", type: "xy", default: "0.5756,0.3713" }
+            },
+            2: {
+                description: "Lightstrip TV",
+                power: { oid: "hue.1.Wohnzimmer_Lightstrip_TV.on", onVal: true, offVal: false },
+                bri: { oid: "hue.1.hue.1.Wohnzimmer_Lightstrip_TV.bri", minVal: 0, maxVal: 254, defaultVal: 230 },
+                ct: { oid: "hue.1.Wohnzimmer_Lightstrip_TV.ct", minVal: 0, maxVal: 254 },
+                sat: { oid: "hue.1.Wohnzimmer_Lightstrip_TV.sat", minVal: 0, maxVal: 254 },
+                modeswitch: { oid: "", whiteModeVal: false, colorModeVal: true },
+                color: { oid: "hue.1.Wohnzimmer_Lightstrip_TV.xy", type: "xy", default: "0.5296,0.4299" }
+            },
+        },
+        sensors: {
+
+        }
+    }/*,
+    4: {
         description: "Test",
         lights: {
             0: {
@@ -189,6 +224,13 @@ const GroupTemplate = {
         blinks: { id: "", common: { read: true, write: true, name: "How many blinks at activation?", type: "number", role: "level", def: 3, min: 1 } },
         bri: { id: "", common: { read: true, write: true, name: "Brightness of lights when blinking, if empty using groupstandard", type: "number", role: "level.brightness", def: 100, max: 100, min: 0, unit: "%" } },
         color: { id: "", common: { read: true, write: true, name: "Color of lights when blinking, if empty using groupstandard", type: "string", role: "level.color.rgb", def: "#FF0000" } }
+    },
+    alexa: {
+        bri: { id: "", common: { read: true, write: true, name: "Brightness", type: "number", role: "level.dimmer", def: 100, min: 0, max: 100, unit: "%", smartName: {de: "", smartType: "LIGHT"} } },
+        //hue: { id: "", common: { read: false, write: true, name: "Buntwert", type: "number", role: "level.color.hue", smartName: {de: "", smartType: "LIGHT"} } },
+        //ct: { id: "", common: { read: true, write: true, name: "Colortemperature", type: "number", role: "level.color.temperature", min: 0, max: 360, smartName: {de: "", smartType: "LIGHT"} } },
+        //sat: { id: "", common: { read: false, write: true, name: "Saturation", type: "number", role: "level.color.saturation", min: 0, max: 100, smartName: {de: "", smartType: "LIGHT"} } },
+        rgb: { id: "", common: { read: true, write: true, name: "Color", type: "string", role: "level.color.rgb", def: "#FF0000", smartName: {de: "", smartType: "LIGHT"} } }
     }
 }
 
@@ -255,6 +297,10 @@ async function init() {
                 for (let z in GroupTemplate[prop1]) {
                     GroupTemplate[prop1][z].id = praefix + "." + Group + "." + prop1 + "." + z;
                     if (!await existsStateAsync(GroupTemplate[prop1][z].id)) {// Prüfen ob state noch nicht vorhanden
+                        if (prop1 == "alexa") { // Prüfen ob der State ein alexa State ist.
+                            if (logging) log("Add Room information to smartName: " + GroupTemplate[prop1][z].id);
+                            GroupTemplate[prop1][z].common.smartName.de = (LightGroups[Group].description + " Licht"); // // Raum zum smartNamen hinzufügen
+                        }
                         await createStateAsync(GroupTemplate[prop1][z].id, GroupTemplate[prop1][z].common);//State anlegen
                         log("Init: Created datapoint " + GroupTemplate[prop1][z].id);
                         DpCount++;
@@ -271,7 +317,7 @@ async function init() {
                             if (logging) log("Triggered " + dp.id + " new value is " + dp.state.val)
                             LightGroups[Group][prop1][z] = dp.state.val;
                             Controller(Group, prop1 + "." + z, dp.oldState.val, dp.state.val);
-                        });
+                        }); 
                     };
                 };
 
@@ -751,6 +797,7 @@ async function SetColor(Group, Color) {
                         await setStateAsync(LightGroups[Group].lights[Light].color.oid, ConvertRgbToXy(rgbTemp), false);
                         break;
                     case "wled":
+                        //await setStateAsync(LightGroups[Group].lights[Light].modeswitch.oid, 99, false)
                         await SetWLED(LightGroups[Group].lights[Light].color.oid, Color);
                         break;
                     default:
@@ -772,14 +819,16 @@ async function SetWLED(id, Color) {
     let cacheSelectorWledFX = $("channel[state.id=" + id + ".*.0.fx]");
     let cacheSelectorWledRGB = $("channel[state.id=" + id + ".*.0.col.0_HEX]");
     if (logging) log(cacheSelectorWledRGB.length + " Segmente gefunden");
+
     cacheSelectorWledPS.each(async function (id, i) {
         await setStateAsync(id, 99, false);
         if (logging) log("Preset: Setze " + id + " auf 99");
     });
-    cacheSelectorWledFX.each(async function (id, i) {
+    /*cacheSelectorWledFX.each(async function (id, i) {
         await setStateAsync(id, 0, false);
         if (logging) log("Effect: Setze " + id + " auf 0");
     });
+    */
     cacheSelectorWledRGB.each(async function (id, i) {
         await setStateAsync(id, Color, false);
         if (logging) log("Color: Setze " + id + " auf " + Color);
@@ -1355,6 +1404,18 @@ async function Controller(Group, prop1, OldVal, NewVal) { //Used by all
         case "blink.enabled":
             blink(Group);
             break;
+        case "alexa.bri":
+            await setStateAsync(praefix + "." + Group + "." + "bri", NewVal, false);
+            setState(praefix + "." + Group + "." + prop1, NewVal, true);
+            break;
+        case "alexa.rgb":
+            await setStateAsync(praefix + "." + Group + "." + "color", NewVal, false);
+            setState(praefix + "." + Group + "." + prop1, NewVal, true);
+            break;
+        case "alexa.ct":
+        case "alexa.hue":
+        case "alexa.sat":
+            break;        
         default:
             log("Controller: Error, unknown or missing property: " + prop1, "warn");
     };
